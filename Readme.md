@@ -1,3 +1,5 @@
+[![Build and deploy to Azure Web App - toll-calculator-yazanghafir](https://github.com/YazanGhafir/toll-calculator/actions/workflows/master_toll-calculator-yazanghafir.yml/badge.svg)](https://github.com/YazanGhafir/toll-calculator/actions/workflows/master_toll-calculator-yazanghafir.yml)
+
 # Toll Calculator API 
 ### Done by [Yazan Ghafir](https://yazanghafir.com)
 

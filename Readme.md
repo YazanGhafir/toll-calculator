@@ -3,7 +3,7 @@
 
 ## Objective
 
-The objective of this project is to develop a robust and flexible toll calculation system for vehicles passing through toll stations. The system determines the applicable toll fees based on vehicle types, passage times, and specific toll-free rules. This system is built using the principles of Domain-Driven Design (DDD) and follows a clean architecture to ensure maintainability, scalability, and ease of testing.
+The objective of this project is to develop a simple, robust and flexible toll calculation system for vehicles passing through toll stations. The system determines the applicable toll fees based on vehicle types, passage times, and specific toll-free rules. This system is built using the principles of Domain-Driven Design (DDD) and follows a clean architecture to ensure maintainability, scalability, and ease of testing.
 
 ### API Testing
 
@@ -11,9 +11,36 @@ The API is available online for testing with an integrated Swagger UI. You can a
 
 [Swagger UI - Toll Calculator API](https://toll-calculator-yazanghafir.azurewebsites.net/)
 
+## Logic Requirements:
+
+- Each passage through a toll station in Gothenburg costs 8, 13, or 18 SEK depending on the time of day.
+- The maximum amount per day and vehicle is 60 SEK.
+
+### Toll Schedule
+
+| Time             | Amount  |
+|------------------|---------|
+| 06:00 - 06:29    | 8 SEK   |
+| 06:30 - 06:59    | 13 SEK  |
+| 07:00 - 07:59    | 18 SEK  |
+| 08:00 - 08:29    | 13 SEK  |
+| 08:30 - 14:59    | 8 SEK   |
+| 15:00 - 15:29    | 13 SEK  |
+| 15:30 - 16:59    | 18 SEK  |
+| 17:00 - 17:59    | 13 SEK  |
+| 18:00 - 18:29    | 8 SEK   |
+| 18:30 - 05:59    | 0 SEK   |
+
+- Congestion tax is levied on vehicles passing a toll station Monday through Friday between 06:00 and 18:29.
+- No tax is levied on Saturdays, public holidays, the day before a public holiday, or during the month of July.
+- Certain vehicles are exempt from the congestion tax.
+- A car that passes multiple toll stations within 60 minutes is only taxed once. The amount to be paid is the highest toll fee of those passages.
+
 ## Project Structure
 
 The project is structured according to the clean architecture principles, which separate the concerns into distinct layers:
+
+![image](https://github.com/user-attachments/assets/91a51137-ce87-4782-9acb-5253e2547217)
 
 - **API (Representation Layer)**: Handles HTTP requests and responses, including the main entry point for the application via Spring Boot controllers.
   

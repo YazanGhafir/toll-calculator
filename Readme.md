@@ -67,7 +67,7 @@ The project is structured according to the clean architecture principles, which 
 
 - **Jackson**: Used for JSON serialization and deserialization, simplifying the process of converting objects to JSON and vice versa.
 
-- **Swagger**: Integrated for live testing and API documentation, making it easier to interact with and test the API endpoints.
+- **Swagger**: Integrated for live testing and API documentation making it easier to interact with and test the API endpoints.
 
 ## Deployment and Testing
 

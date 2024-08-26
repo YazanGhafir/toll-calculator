@@ -21,7 +21,21 @@ public class TollCalculator {
         this.tollFeeRetriever = tollFeeRetriever;
     }
 
+    /**
+     * This method calculates the total fees per vehicle per day.
+     * It first checks if it is Toll free day or vehicle, then the total fee is 0
+     * Then it order the passage dates. Then it start with the first passage date
+     * and calculate the maximum fee that should be paid for all passages during
+     * 1 hour from the first passage and add that to the total fee.
+     * Then we jump one hour ahead and find the first passage after this hour, start
+     * from it and repeat the process until reaching the latest passage time and finally
+     * return the total fee.
+     *
+     * @param vehicle      The vehicle object.
+     * @return The calculated total amount fees that should be paid
+     */
     public int calculateToll(Vehicle vehicle) {
+
         // Check if the vehicle type or any of the dates are toll-free
         if (tollFreeValidator.isTollFree(vehicle)) {
             return 0; // Toll-free, so the total fee is 0

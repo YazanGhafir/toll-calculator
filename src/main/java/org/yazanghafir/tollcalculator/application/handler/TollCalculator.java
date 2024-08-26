@@ -29,26 +29,25 @@ public class TollCalculator {
      * 1 hour from the first passage and add that to the total fee.
      * Then we jump one hour ahead and find the first passage after this hour, start
      * from it and repeat the process until reaching the latest passage time and finally
-     * return the total fee.
+     * return the total fee. It the total exceeds 60 it returns 60.
      *
      * @param vehicle      The vehicle object.
      * @return The calculated total amount fees that should be paid
      */
     public int calculateToll(Vehicle vehicle) {
-
         // Check if the vehicle type or any of the dates are toll-free
         if (tollFreeValidator.isTollFree(vehicle)) {
             return 0; // Toll-free, so the total fee is 0
         }
 
+        // Convert vehicleDateTimes to LocalDateTime and sort them
         List<LocalDateTime> orderedPassageDates = vehicle.getVehicleDateTimes().stream()
                 .map(date -> date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
                 .sorted()
                 .collect(Collectors.toList());
 
         int totalFee = 0;
-        final LocalDateTime firstPassage = orderedPassageDates.get(0);
-        LocalDateTime intervalStart = firstPassage;
+        LocalDateTime intervalStart = orderedPassageDates.get(0);
 
         for (LocalDateTime passageTime : orderedPassageDates) {
             // Skip passage times that occurred before the current interval
@@ -56,10 +55,14 @@ public class TollCalculator {
                 continue;
             }
 
-            // Calculate the end time of the current interval (1 hour later)
-            final LocalDateTime finalIntervalStart = intervalStart;
-            final LocalDateTime intervalEnd = intervalStart.plusHours(1);
+            // Set the current interval start time
+            intervalStart = passageTime;
 
+            // Calculate the end time of the current interval (1 hour later)
+            LocalDateTime intervalEnd = intervalStart.plusHours(1);
+            LocalDateTime finalIntervalStart = intervalStart;
+
+            // Select the highest fee within the current interval and add it to the totalFee
             int intervalMaxFee = orderedPassageDates.stream()
                     .filter(date -> !date.isBefore(finalIntervalStart) && date.isBefore(intervalEnd))
                     .mapToInt(date -> tollFeeRetriever.getTollFeeAmount(date.toLocalTime()))
@@ -72,7 +75,6 @@ public class TollCalculator {
             intervalStart = intervalEnd;
         }
 
-        // Cap the total fee at 60 SEK
         return Math.min(totalFee, 60);
     }
 }

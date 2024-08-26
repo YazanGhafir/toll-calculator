@@ -6,6 +6,7 @@ import org.yazanghafir.tollcalculator.application.handler.TollCalculator;
 import org.yazanghafir.tollcalculator.application.query.TollFeeAmountRetriever;
 import org.yazanghafir.tollcalculator.application.validation.TollCalculatorRequestValidator;
 import org.yazanghafir.tollcalculator.domain.entities.Vehicle;
+import org.yazanghafir.tollcalculator.domain.responses.TollCalculatorResponse;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -26,24 +27,33 @@ public class TollCalculatorController {
     }
 
     @PostMapping("/vehicle")
-    public String calculateToll(
+    public TollCalculatorResponse calculateToll(
             @RequestParam String vehiclePlate,
             @RequestParam String vehicleType,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) List<Date> vehicleDateTimes) {
 
-        // Validate both vehicle type and date times
-        String validationMessage = requestValidator.validateRequest(vehicleType, vehicleDateTimes);
-        if (validationMessage != null) {
-            return validationMessage;
+        try
+        {
+            // Validate both vehicle type and date times
+            String validationMessage = requestValidator.validateRequest(vehicleType, vehicleDateTimes);
+            if (validationMessage != null) {
+                return new TollCalculatorResponse(0, false, validationMessage);
+            }
+
+            // Create a vehicle object from the request parameters
+            Vehicle vehicle = new Vehicle(vehiclePlate, vehicleType, vehicleDateTimes);
+
+            // Calculate the total toll fee for the vehicle
+            int totalTollFee = tollCalculator.calculateToll(vehicle);
+
+            // Return the total toll fee as a response
+            return new TollCalculatorResponse(
+                    totalTollFee, true, "Total toll fee: " + totalTollFee + " SEK");
         }
-
-        // Create a vehicle object from the request parameters
-        Vehicle vehicle = new Vehicle(vehiclePlate, vehicleType, vehicleDateTimes);
-
-        // Calculate the total toll fee for the vehicle
-        int totalTollFee = tollCalculator.calculateToll(vehicle);
-
-        // Return the total toll fee as a response
-        return "Total toll fee: " + totalTollFee + " SEK";
+        catch (Exception ex)
+        {
+            return new TollCalculatorResponse(
+                    0, false, "Error processing the request. Error: " + ex.getMessage());
+        }
     }
 }

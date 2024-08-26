@@ -49,9 +49,9 @@ The project is structured according to the clean architecture principles, which 
   - **Queries**: Retrieve and return data from the system in a read-only fashion.
   - **Validators**: Ensure the correctness of input data before it's processed by the application logic.
 
-- **Domain Layer**: Encapsulates the core business logic, including domain entities and value objects. This layer is independent of any external frameworks or technologies, ensuring the business logic is at the center of the design.
+- **Domain Layer**: Encapsulates the core business logic, in this simple project it contains the entities, configuration dtos, request and response objects. This layer is independent of any external frameworks or technologies, ensuring the business logic is at the center of the design.
 
-- **Infrastructure Layer**: Handles the implementation details such as data storage, external services, and configuration loading. This layer is responsible for integrating with the outer world while keeping the core logic clean and isolated.
+- **Infrastructure Layer**: Handles the implementation of configuration loading. This layer keeps the core logic clean and isolated.
 
 ### Key Features
 

@@ -1,36 +1,31 @@
 package org.yazanghafir.tollcalculator.api;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.yazanghafir.tollcalculator.application.handler.TollCalculator;
 import org.yazanghafir.tollcalculator.application.query.TollFeeAmountRetriever;
 import org.yazanghafir.tollcalculator.application.validation.TollCalculatorRequestValidator;
-import org.yazanghafir.tollcalculator.domain.configuration.ConfigurationFilePath;
-import org.yazanghafir.tollcalculator.domain.configuration.TollFees;
 import org.yazanghafir.tollcalculator.domain.entities.Vehicle;
-import org.yazanghafir.tollcalculator.infrastructure.configuration.ConfigurationLoader;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/api/toll")
 public class TollCalculatorController {
 
-    private final TollFeeAmountRetriever tollFeeChecker;
     private final TollCalculatorRequestValidator requestValidator;
+    private final TollCalculator tollCalculator;
 
-    public TollCalculatorController(TollFeeAmountRetriever tollFeeChecker, TollCalculatorRequestValidator requestValidator) {
-        this.tollFeeChecker = tollFeeChecker;
+    public TollCalculatorController(TollCalculatorRequestValidator requestValidator, TollCalculator tollCalculator) {
         this.requestValidator = requestValidator;
+        this.tollCalculator = tollCalculator;
     }
 
-    @GetMapping("/calculateToll")
+    @PostMapping("/vehicle")
     public String calculateToll(
             @RequestParam String vehiclePlate,
             @RequestParam String vehicleType,
@@ -39,17 +34,16 @@ public class TollCalculatorController {
         // Validate both vehicle type and date times
         String validationMessage = requestValidator.validateRequest(vehicleType, vehicleDateTimes);
         if (validationMessage != null) {
-            return validationMessage; // Return validation error message if any validation fails
+            return validationMessage;
         }
 
-        // Convert vehicleDateTimes to LocalTime
-        List<LocalTime> localVehicleTimes = vehicleDateTimes.stream()
-                .map(date -> date.toInstant().atZone(ZoneId.systemDefault()).toLocalTime())
-                .collect(Collectors.toList());
+        // Create a vehicle object from the request parameters
+        Vehicle vehicle = new Vehicle(vehiclePlate, vehicleType, vehicleDateTimes);
 
-        // Assuming you want to use the first time of the day for toll calculation
-        LocalTime timeOfDay = localVehicleTimes.get(0);
+        // Calculate the total toll fee for the vehicle
+        int totalTollFee = tollCalculator.calculateToll(vehicle);
 
-        return tollFeeChecker.getTollFeeAmount(timeOfDay) + " SEK";
+        // Return the total toll fee as a response
+        return "Total toll fee: " + totalTollFee + " SEK";
     }
 }

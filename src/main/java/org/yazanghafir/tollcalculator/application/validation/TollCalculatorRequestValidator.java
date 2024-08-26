@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class TollCalculatorRequestValidator {
+public class TollCalculatorRequestValidator implements ITollCalculatorRequestValidator {
     private final ConfigurationLoader<VehicleTypes> configLoader;
 
     public TollCalculatorRequestValidator(ConfigurationLoader<VehicleTypes> configLoader) {
@@ -29,6 +29,7 @@ public class TollCalculatorRequestValidator {
      * @param vehicleDateTimes The list of vehicle date times to validate.
      * @return A validation message if either check fails, otherwise null.
      */
+    @Override
     public String validateRequest(String vehicleType, List<Date> vehicleDateTimes) {
         // Validate vehicle type
         String typeValidationMessage = validateVehicleType(vehicleType);
@@ -51,6 +52,7 @@ public class TollCalculatorRequestValidator {
      * @param vehicleDateTimes The list of vehicle date times to validate.
      * @return A validation message if the dates are not within the same day, otherwise null.
      */
+    @Override
     public String validateVehicleDateTimes(List<Date> vehicleDateTimes) {
         if (vehicleDateTimes == null || vehicleDateTimes.isEmpty()) {
             return "No date times provided.";
@@ -75,6 +77,7 @@ public class TollCalculatorRequestValidator {
      * @param vehicleType The type of the vehicle to validate.
      * @return A validation message if the vehicleType is not valid, otherwise null.
      */
+    @Override
     public String validateVehicleType(String vehicleType) {
         try {
             Optional<VehicleTypes> vehicleTypesOptional = configLoader.loadConfiguration(

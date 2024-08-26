@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TollCalculator {
+public class TollCalculator implements ITollCalculator {
 
     private final TollFreeValidator tollFreeValidator;
     private final TollFeeAmountRetriever tollFeeRetriever;
@@ -34,6 +34,7 @@ public class TollCalculator {
      * @param vehicle      The vehicle object.
      * @return The calculated total amount fees that should be paid
      */
+    @Override
     public int calculateToll(Vehicle vehicle) {
         // Check if the vehicle type or any of the dates are toll-free
         if (tollFreeValidator.isTollFree(vehicle)) {

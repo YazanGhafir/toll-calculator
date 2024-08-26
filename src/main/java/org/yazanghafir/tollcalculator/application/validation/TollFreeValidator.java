@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class TollFreeValidator {
+public class TollFreeValidator implements ITollFreeValidator {
 
     /**
      * Checks if the vehicle type is toll-free based on the data from the Toll Vehicle Types JSON.
@@ -27,6 +27,7 @@ public class TollFreeValidator {
      * @param type The type of the vehicle.
      * @return true if the vehicle is toll-free, false otherwise.
      */
+    @Override
     public boolean isTollFreeVehicle(String type) {
         try {
             ConfigurationLoader<VehicleTypes> configUploader = new ConfigurationLoader<>();
@@ -59,6 +60,7 @@ public class TollFreeValidator {
      * @param date The date to check.
      * @return true if the date is a holiday or a weekend, false otherwise.
      */
+    @Override
     public boolean isTollFreeDate(LocalDate date) {
         // Check if the date is a weekend
         if (date.getDayOfWeek().getValue() == 6 || date.getDayOfWeek().getValue() == 7 || date.getMonthValue() == 7) {
@@ -88,6 +90,7 @@ public class TollFreeValidator {
      * @param vehicle The vehicle to check.
      * @return true if the vehicle is toll-free on the given dates, false otherwise.
      */
+    @Override
     public boolean isTollFree(Vehicle vehicle) {
         // Check if the vehicle type is toll-free
         if (isTollFreeVehicle(vehicle.getVehicleType())) {

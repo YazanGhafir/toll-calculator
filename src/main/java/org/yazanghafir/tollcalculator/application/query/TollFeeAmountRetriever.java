@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TollFeeAmountRetriever {
+public class TollFeeAmountRetriever implements ITollFeeAmountRetriever {
 
     private final ConfigurationLoader<TollFees> configLoader;
 
@@ -21,6 +21,7 @@ public class TollFeeAmountRetriever {
         this.configLoader = configLoader;
     }
 
+    @Override
     public int getTollFeeAmount(LocalTime timeOfDay) {
         List<TollFeeRange> tollFeeRanges = loadTollFeeData();
 
@@ -31,6 +32,7 @@ public class TollFeeAmountRetriever {
                 .orElse(0); // Default fee when no matching range is found.
     }
 
+    @Override
     public List<TollFeeRange> loadTollFeeData() {
         List<TollFeeRange> tollFeeRanges = new ArrayList<>();
 
